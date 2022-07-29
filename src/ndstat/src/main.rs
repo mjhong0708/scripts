@@ -68,7 +68,7 @@ fn main() {
         String::from_utf8(out).unwrap()
     };
 
-    for (line, owner) in pestat_output.lines().skip(2).zip(node_owners.iter()) {
+    for (line, owner) in pestat_output.lines().skip(3).zip(node_owners.iter()) {
         let mut row: Vec<&str> = line.split_whitespace().collect();
         let mut color = Color::Reset;
         if row.len() == 5 {
