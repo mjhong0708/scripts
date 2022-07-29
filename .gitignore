@@ -269,3 +269,5 @@ bin/vasp-slurm-generator
 bin/chgdiff
 bin/check_ef
 bin/pos2pot
+bin/ndstat
+bin/qst
