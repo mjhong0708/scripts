@@ -268,3 +268,4 @@ bin/kpointsgen
 bin/vasp-slurm-generator
 bin/chgdiff
 bin/check_ef
+bin/pos2pot

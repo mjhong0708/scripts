@@ -1,10 +1,11 @@
-all: kpointsgen vasp-slurm-generator chgdiff libscripts check_ef
+all: kpointsgen vasp-slurm-generator chgdiff libscripts check_ef pos2pot
 
 install:
 	cp target/release/kpointsgen bin && \
 	cp target/release/vasp-slurm-generator bin && \
 	cp target/release/chgdiff bin && \
-	cp target/release/check_ef bin
+	cp target/release/check_ef bin && \
+	cp target/release/pos2pot bin
 
 kpointsgen:	src/kpointsgen/*
 	cd src/kpointsgen && \
@@ -23,6 +24,11 @@ chgdiff: src/chgdiff/*
 
 check_ef: src/check_ef/*
 	cd src/check_ef && \
+	cargo build --release && \
+	cd ../..;
+
+pos2pot: src/pos2pot/*
+	cd src/pos2pot && \
 	cargo build --release && \
 	cd ../..;
 
