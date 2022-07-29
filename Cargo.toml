@@ -1,9 +1,2 @@
 [workspace]
-
-members = [
-    "src/kpointsgen",
-    "src/vasp-slurm-generator",
-    "src/libscripts",
-    "src/chgdiff",
-    "src/check_ef"
-]
+members = ["src/*"]
