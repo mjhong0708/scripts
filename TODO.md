@@ -1,0 +1,2 @@
+- `vef.py` reimplementation
+- Calculate NELECT from POTCAR and POSCAR
