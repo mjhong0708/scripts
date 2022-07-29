@@ -4,7 +4,7 @@ install:
 	cp /target/release/kpointsgen bin && \
 	cp /target/release/vasp-slurm-generator bin && \
 	cp /target/release/chgdiff bin && \
-	cp /target/release/check_ef bin && \
+	cp /target/release/check_ef bin
 
 kpointsgen:	src/kpointsgen/*
 	cd src/kpointsgen && \
