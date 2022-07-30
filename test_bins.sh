@@ -22,5 +22,5 @@ echo "Testing check_ef...";
 test_check_ef;
 
 
-echo "Testing charge density difference...";
-cargo run --bin chgdiff --release -- $CHG_AB --ref1 $CHG_A --ref2 $CHG_B;
+# echo "Testing charge density difference...";
+# cargo run --bin chgdiff --release -- $CHG_AB --ref1 $CHG_A --ref2 $CHG_B;
