@@ -9,6 +9,13 @@ use std::fs::File;
 use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
 
+fn read_file(filename: &PathBuf) -> Result<String> {
+    let mut buf = String::new();
+    let mut f = File::open(filename)?;
+    f.read_to_string(&mut buf)?;
+    Ok(buf)
+}
+
 #[derive(Parser)]
 #[clap(
     about = "Check convergence of vasp geometry optimization",
@@ -47,7 +54,6 @@ fn main() -> Result<()> {
             .map_axis(Axis(1), |v| *v.max().unwrap())
             .mapv(|x| x.sqrt());
         write!(header, "{:<15}", "F_max (eV/A)")?;
-        // header.push_str(&format!("{:<15}", "F_max (eV/A)"));
         Some(max_forces)
     } else {
         None
@@ -94,11 +100,4 @@ fn main() -> Result<()> {
         file.write_all(lines.join("\n").as_bytes())?;
     }
     Ok(())
-}
-
-fn read_file(filename: &PathBuf) -> Result<String> {
-    let mut buf = String::new();
-    let mut f = File::open(filename)?;
-    f.read_to_string(&mut buf)?;
-    Ok(buf)
 }
