@@ -1,3 +1,5 @@
+use rayon::prelude::*;
+
 fn n_atoms_in_poscar(poscar: &str) -> usize {
     poscar
         .lines()
@@ -56,7 +58,7 @@ pub fn read_forces(poscar: &str, outcar: &str) -> Vec<Vec<Vec<f64>>> {
     let outcar_lines = outcar.lines().collect::<Vec<_>>();
 
     outcar_lines
-        .iter()
+        .par_iter()
         .enumerate()
         .filter(|(_, line)| line.contains("TOTAL-FORCE"))
         .map(|(i, _)| i)
