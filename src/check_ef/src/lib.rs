@@ -53,19 +53,15 @@ pub fn read_energies(oszicar: &str) -> Vec<f64> {
 pub fn read_forces(poscar: &str, outcar: &str) -> Vec<Vec<Vec<f64>>> {
     let n_atoms: usize = n_atoms_in_poscar(poscar);
     let mask = get_mask(&poscar, n_atoms);
+    let outcar_lines = outcar.lines().collect::<Vec<_>>();
 
-    outcar
-        .lines()
+    outcar_lines
+        .iter()
         .enumerate()
         .filter(|(_, line)| line.contains("TOTAL-FORCE"))
         .map(|(i, _)| i)
         .map(|i| {
-            let block = outcar
-                .lines()
-                .skip(i + 2)
-                .take(n_atoms)
-                .collect::<Vec<&str>>()
-                .join("\n");
+            let block = &outcar_lines[i + 2..i + 2 + n_atoms].join("\n");
             read_force_block(&block, &mask)
         })
         .collect()
