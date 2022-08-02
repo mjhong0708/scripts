@@ -1,10 +1,10 @@
-all: kpointsgen vasp-slurm-generator chgdiff libscripts check_ef pos2pot ndstat qst
+all: kpointsgen vasp-slurm-generator chgdiff libscripts check_convergence pos2pot ndstat qst
 
 install:
 	cp target/release/kpointsgen bin && \
 	cp target/release/vasp-slurm-generator bin && \
 	cp target/release/chgdiff bin && \
-	cp target/release/check_ef bin && \
+	cp target/release/check_convergence bin && \
 	cp target/release/pos2pot bin && \
 	cp target/release/ndstat bin && \
 	cp target/release/qst bin
@@ -24,8 +24,8 @@ chgdiff: src/chgdiff/*
 	cargo build --release && \
 	cd ../..;
 
-check_ef: src/check_ef/*
-	cd src/check_ef && \
+check_convergence: src/check_convergence/*
+	cd src/check_convergence && \
 	cargo build --release && \
 	cd ../..;
 

@@ -1,5 +1,5 @@
 [package]
-name = "check_ef"
+name = "check_convergence"
 version = "0.1.0"
 edition = "2021"
 
