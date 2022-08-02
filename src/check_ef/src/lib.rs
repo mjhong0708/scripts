@@ -1,6 +1,3 @@
-use ndarray::prelude::*;
-use ndarray::stack;
-
 fn n_atoms_in_poscar(poscar: &str) -> usize {
     poscar
         .lines()
@@ -11,8 +8,8 @@ fn n_atoms_in_poscar(poscar: &str) -> usize {
         .sum()
 }
 
-fn get_mask(poscar: &str, n_atoms: usize) -> Array1<f64> {
-    let vals: Vec<f64> = match poscar.lines().nth(7).unwrap().starts_with('S') {
+fn get_mask(poscar: &str, n_atoms: usize) -> Vec<f64> {
+    match poscar.lines().nth(7).unwrap().starts_with('S') {
         true => poscar
             .lines()
             .skip(9)
@@ -23,24 +20,20 @@ fn get_mask(poscar: &str, n_atoms: usize) -> Array1<f64> {
             })
             .collect(),
         false => vec![1.0; n_atoms],
-    };
-
-    Array::from_vec(vals)
+    }
 }
 
-fn read_force_block(block: &str, n_atoms: usize, mask: &Array1<f64>) -> Array2<f64> {
-    let force_components = block
+fn read_force_block(block: &str, mask: &[f64]) -> Vec<Vec<f64>> {
+    block
         .lines()
-        .map(|line| {
+        .enumerate()
+        .map(|(i, line)| {
             line.split_ascii_whitespace()
                 .skip(3)
-                .map(|x| x.parse::<f64>().unwrap())
+                .map(|x| mask[i] * x.parse::<f64>().unwrap())
+                .collect::<Vec<_>>()
         })
-        .flatten();
-    let forces = Array::from_iter(force_components)
-        .into_shape((n_atoms, 3))
-        .unwrap();
-    forces * mask.view().into_shape((n_atoms, 1)).unwrap()
+        .collect::<Vec<_>>()
 }
 
 pub fn read_energies(oszicar: &str) -> Vec<f64> {
@@ -57,10 +50,11 @@ pub fn read_energies(oszicar: &str) -> Vec<f64> {
         });
     res.map(|x| x.unwrap()).collect()
 }
-pub fn read_forces(poscar: &str, outcar: &str) -> Array3<f64> {
+pub fn read_forces(poscar: &str, outcar: &str) -> Vec<Vec<Vec<f64>>> {
     let n_atoms: usize = n_atoms_in_poscar(poscar);
     let mask = get_mask(&poscar, n_atoms);
-    let forces_list: Vec<Array2<f64>> = outcar
+
+    outcar
         .lines()
         .enumerate()
         .filter(|(_, line)| line.contains("TOTAL-FORCE"))
@@ -72,15 +66,16 @@ pub fn read_forces(poscar: &str, outcar: &str) -> Array3<f64> {
                 .take(n_atoms)
                 .collect::<Vec<&str>>()
                 .join("\n");
-            read_force_block(&block, n_atoms, &mask)
+            read_force_block(&block, &mask)
         })
-        .collect();
+        .collect()
+}
 
-    // create Array3 from forces_list
-    let forces = stack(
-        Axis(0),
-        &forces_list.iter().map(|x| x.view()).collect::<Vec<_>>(),
-    )
-    .unwrap();
+pub fn calculate_max_force(forces: &[Vec<f64>]) -> f64 {
     forces
+        .iter()
+        .map(|f| f[0].powi(2) + f[1].powi(2) + f[2].powi(2))
+        .max_by(|&x, &y| x.total_cmp(&y))
+        .unwrap()
+        .sqrt()
 }

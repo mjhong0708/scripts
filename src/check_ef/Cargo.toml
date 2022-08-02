@@ -8,7 +8,5 @@ edition = "2021"
 [dependencies]
 anyhow = "1.0.58"
 clap = { version = "3.2", features = ["derive"] }
-ndarray = "0.15.4"
-ndarray-stats = "0.5.0"
 paris = "1.5.13"
 regex = "1.6"

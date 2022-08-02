@@ -1,8 +1,6 @@
 use anyhow::Result;
-use check_ef::{read_energies, read_forces};
+use check_ef::{calculate_max_force, read_energies, read_forces};
 use clap::Parser;
-use ndarray::Axis;
-use ndarray_stats::QuantileExt;
 use paris::Logger;
 use std::fmt::Write as _;
 use std::fs::File;
@@ -49,10 +47,10 @@ fn main() -> Result<()> {
         let outcar = read_file(&dir.join("OUTCAR")).expect("OUTCAR not found");
         let forces_list = read_forces(&poscar, &outcar);
 
-        let max_forces = (&forces_list * &forces_list)
-            .sum_axis(Axis(2))
-            .map_axis(Axis(1), |v| *v.max().unwrap())
-            .mapv(|x| x.sqrt());
+        let max_forces = forces_list
+            .iter()
+            .map(|forces| calculate_max_force(forces))
+            .collect::<Vec<_>>();
         write!(header, "{:<15}", "F_max (eV/A)")?;
         Some(max_forces)
     } else {
