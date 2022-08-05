@@ -4,7 +4,7 @@ use rayon::prelude::*;
 use std::fs::read_to_string;
 use std::io::Write;
 
-fn xyz_from_vasp(poscar: &str, outcar: &str) -> Vec<xyz::XYZBlock> {
+fn xyz_from_vasp(poscar: &str, outcar: &str, read_every: usize) -> Vec<xyz::XYZBlock> {
     let cell = poscar::read_unit_cell(poscar);
     let unique_elems: Vec<&str> = poscar.lines().nth(5).unwrap().trim().split_whitespace().collect();
     let n_per_elem: Vec<usize> = poscar
@@ -26,6 +26,7 @@ fn xyz_from_vasp(poscar: &str, outcar: &str) -> Vec<xyz::XYZBlock> {
     let trajectory = outcar::read_trajectory(poscar, outcar);
     trajectory
         .into_par_iter()
+        .step_by(read_every)
         .map(|frame| xyz::XYZBlock {
             cell: Some(cell.clone()),
             elements: elem_vec.clone(),
@@ -35,9 +36,15 @@ fn xyz_from_vasp(poscar: &str, outcar: &str) -> Vec<xyz::XYZBlock> {
 }
 
 fn main() {
+    let args = std::env::args().collect::<Vec<String>>();
+    let write_every = match args.iter().nth(1) {
+        Some(x) => x.parse::<usize>().unwrap(),
+        None => 1, // Default to writing every frame
+    };
+
     let poscar = read_to_string("POSCAR").expect("POSCAR not found");
     let outcar = read_to_string("OUTCAR").expect("OUTCAR not found");
-    let xyz = xyz_from_vasp(&poscar, &outcar);
+    let xyz = xyz_from_vasp(&poscar, &outcar, write_every);
 
     // Write each frame in traj.xyz file
     let mut file = std::fs::File::create("traj.xyz").expect("traj.xyz not created");
