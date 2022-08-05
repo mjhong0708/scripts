@@ -11,3 +11,4 @@ clap = { version = "3.2", features = ["derive"] }
 paris = "1.5.13"
 rayon = "1.5.3"
 regex = "1.6"
+libscripts = { path = "../libscripts" }

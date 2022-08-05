@@ -1,3 +1,4 @@
+pub mod io;
 pub mod parser;
 pub mod periodic_table;
 pub mod structure;
@@ -9,9 +10,7 @@ mod tests {
     fn test_get_distance() {
         let test_structure = Structure {
             cell: 2.0 * SMatrix::<f64, 3, 3>::identity(),
-            coords: OMatrix::<f64, Dynamic, Const<3>>::from_row_slice(&[
-                1.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.9, 1.0, 1.0,
-            ]),
+            coords: OMatrix::<f64, Dynamic, Const<3>>::from_row_slice(&[1.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.9, 1.0, 1.0]),
             elements: vec!["H".to_string(), "O".to_string()],
 
             charge: 0.0,

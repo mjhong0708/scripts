@@ -1,7 +1,6 @@
-pub mod reader;
-pub use reader::*;
 pub mod cli;
 use anyhow::Result;
+use libscripts::parser::outcar;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::PathBuf;
@@ -14,7 +13,7 @@ pub fn read_file(filename: &PathBuf) -> Result<String> {
 }
 
 pub fn read_max_forces(poscar: &str, outcar: &str) -> Vec<f64> {
-    read_forces(&poscar, &outcar)
+    outcar::read_forces(&poscar, &outcar)
         .iter()
         .map(|forces| {
             forces

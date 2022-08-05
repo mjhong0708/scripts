@@ -1,9 +1,9 @@
 use check_convergence::*;
 use clap::Parser;
+use libscripts::parser::oszicar;
 use std::fmt::Write as _;
 use std::fs::File;
 use std::io::Write;
-
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let opts = self::cli::Options::parse();
     let mut log = paris::Logger::new();
@@ -22,7 +22,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     };
 
     // Read energies from oszicar
-    let energies = read_energies(&oszicar);
+    let energies = oszicar::read_energies(&oszicar);
     if energies.is_empty() {
         log.error("No SCF loop found.");
         std::process::exit(1);

@@ -4,6 +4,45 @@
 // use std::fs::File;
 // use std::io::Read;
 
+pub fn n_atoms_in_poscar(poscar: &str) -> usize {
+    poscar
+        .lines()
+        .nth(6)
+        .unwrap()
+        .split_whitespace()
+        .map(|x| x.parse::<usize>().unwrap())
+        .sum()
+}
+
+pub fn read_unit_cell(poscar: &str) -> Vec<Vec<f64>> {
+    poscar
+        .lines()
+        .skip(2)
+        .take(3)
+        .map(|line| {
+            line.trim()
+                .split_whitespace()
+                .map(|x| x.parse::<f64>().unwrap())
+                .collect()
+        })
+        .collect()
+}
+
+pub fn get_fix_mask(poscar: &str, n_atoms: usize) -> Vec<f64> {
+    match poscar.lines().nth(7).unwrap().starts_with('S') {
+        true => poscar
+            .lines()
+            .skip(9)
+            .take(n_atoms)
+            .map(|line| match line.contains("F") {
+                true => 0.0,
+                false => 1.0,
+            })
+            .collect(),
+        false => vec![1.0; n_atoms],
+    }
+}
+
 // impl Structure {
 //     pub fn from_poscar(filename: &str) {
 //         let mut file = File::open(filename).unwrap();
